@@ -1,0 +1,76 @@
+name: Validate and package add-on
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate XML and Python
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree
+
+          for path in [Path("addon.xml"), Path("resources/settings.xml")]:
+              ElementTree.parse(path)
+              print(f"Validated {path}")
+          PY
+          python -m compileall -q service.py scripts
+
+      - name: Read add-on version
+        id: metadata
+        shell: bash
+        run: |
+          version="$(python -c 'from xml.etree import ElementTree; print(ElementTree.parse("addon.xml").getroot().get("version"))')"
+          if [[ -z "$version" || "$version" == "None" ]]; then
+            echo "addon.xml does not contain a version" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build versioned Kodi add-on ZIP
+        run: python scripts/package_addon.py --output dist
+
+      - name: Stage installable workflow artifact
+        shell: bash
+        run: |
+          rm -rf artifact
+          mkdir -p artifact
+          package="$(find dist -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          if [[ -z "$package" ]]; then
+            echo "No add-on ZIP was generated" >&2
+            exit 1
+          fi
+          unzip -q "$package" -d artifact
+          test -f artifact/service.tailscale/addon.xml
+          if find artifact -type f -name '*.zip' | grep -q .; then
+            echo "The workflow artifact must not contain a nested ZIP" >&2
+            exit 1
+          fi
+
+      - name: Upload installable add-on artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kodi-addon-files-${{ steps.metadata.outputs.version }}
+          path: artifact
+          if-no-files-found: error

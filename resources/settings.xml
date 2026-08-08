@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings>
+  <setting id="enabled" type="bool" label="30001" default="true" />
+  <setting id="auth_key" type="text" label="30002" default="" option="hidden" />
+  <setting id="hostname" type="text" label="30003" default="" />
+  <setting id="image" type="text" label="30004" default="tailscale/tailscale:stable" />
+  <setting id="userspace" type="bool" label="30005" default="false" />
+  <setting id="accept_dns" type="bool" label="30006" default="true" />
+  <setting id="extra_args" type="text" label="30007" default="" />
+  <setting id="configure_connman_dns" type="bool" label="30008" default="true" />
+</settings>

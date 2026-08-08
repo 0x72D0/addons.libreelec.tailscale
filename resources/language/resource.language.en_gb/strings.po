@@ -1,0 +1,41 @@
+# Kodi Media Center language file
+# Addon Name: Tailscale
+# Addon id: service.tailscale
+# Addon Provider: LibreELEC Tailscale Add-on
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgctxt "#30001"
+msgid "Enable Tailscale container"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Tailscale auth key"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Tailscale hostname"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Docker image"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Use userspace networking"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Accept Tailscale DNS"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Tailscale extra arguments"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Configure ConnMan for Tailscale MagicDNS"
+msgstr ""
