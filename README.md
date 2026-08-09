@@ -62,33 +62,3 @@ The **Tailscale extra arguments** field is passed to the image as `TS_EXTRA_ARGS
 ```
 
 Review the Tailscale Docker documentation before enabling subnet routes, exit-node behavior, or other privileged features.
-
-## Security notes
-
-The default configuration uses host networking, `/dev/net/tun`, `NET_ADMIN`, and `NET_RAW`, as required for a full Tailscale node in a container. This add-on is intended for a trusted LibreELEC installation. Userspace networking reduces the required kernel networking functionality but changes how traffic is exposed.
-
-This project is an add-on wrapper and is not affiliated with Tailscale, Inc.
-
-## CI/CD and releases
-
-The GitHub Actions release workflow publishes the installable Kodi package as:
-
-```text
-service.tailscale-<version>.zip
-```
-
-GitHub also automatically displays `Source code (zip)` and `Source code (tar.gz)` for every release. Those are GitHub-generated repository snapshots and are not the Kodi add-on. Install the explicitly uploaded `service.tailscale-<version>.zip` asset instead.
-
-To repair an existing release, manually run **Actions → Release add-on → Run workflow** and enter its tag, for example `v0.1.0`. If the release already exists, the workflow uploads or replaces the versioned Kodi ZIP asset with `--clobber`.
-
-For a tag-triggered release, commit the version change and push the matching tag:
-
-```sh
-git add addon.xml
-git commit -m "Release v0.1.3"
-git tag v0.1.3
-git push origin main
-git push origin v0.1.3
-```
-
-For a manually dispatched release, enter a tag matching the `addon.xml` version, such as `v0.1.3`. If that tag does not exist, the workflow verifies the version, creates the tag on the current default branch, and continues automatically. The workflow will reject a tag whose version does not match `addon.xml`.
