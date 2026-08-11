@@ -316,12 +316,16 @@ class TailscaleService:
                 labels = container.get("Config", {}).get("Labels", {}) or {}
                 if labels.get("com.kodi.addon") == ADDON_ID:
                     self.stop_container()
-        elif not self.ensure_container():
-            self.log("Tailscale could not be started", xbmc.LOGERROR)
         else:
-            self.log("Tailscale service is running")
+            # Apply ConnMan DNS before starting Tailscale. This is especially
+            # important on a fresh boot, when the container could otherwise
+            # attempt its first control-plane lookup with the old resolver.
+            self.configure_connman_dns_if_needed(force=True)
+            if not self.ensure_container():
+                self.log("Tailscale could not be started", xbmc.LOGERROR)
+            else:
+                self.log("Tailscale service is running")
 
-        self.configure_connman_dns_if_needed(force=True)
         while not self.monitor.abortRequested():
             self.configure_connman_dns_if_needed()
             self.monitor.waitForAbort(CONNMAN_POLL_INTERVAL)
